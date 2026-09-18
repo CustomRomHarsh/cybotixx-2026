@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Loader2 } from "lucide-react";
+import { Calendar, Loader2, Terminal, CheckCircle2, AlertCircle, X, Users, ArrowLeft } from "lucide-react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { getEventStatus, getStatusVariant } from "@/lib/eventStatus";
@@ -20,14 +20,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { CheckCircle2, AlertCircle, X } from "lucide-react";
 import { Event } from "@/types";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import Link from "next/link";
 
 const phoneRegex = /^[+]?[\d\s-]{10,15}$/;
 
@@ -69,7 +64,6 @@ const Register = () => {
     fetchEventsData();
   }, [fetchEventsData]);
 
-  // Filter out ended events
   const activeEvents = events?.filter((e) => getEventStatus(e.eventDate) !== "ended") || [];
 
   const isEventFull = (event: Event) => {
@@ -145,7 +139,7 @@ const Register = () => {
         setFeedbackDialog({
           open: true,
           type: "success",
-          message: "Registration successful! We've sent a confirmation to your email."
+          message: "Registration successful! Confirmation dispatched to your inbox."
         });
         setFullName("");
         setEmail("");
@@ -172,47 +166,89 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <main className="pt-16">
-        <div className="container mx-auto px-4 py-16 max-w-2xl">
-          <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground mb-3">Register</p>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">Event Registration</h1>
-          <p className="text-muted-foreground text-sm mb-10">Fill in your details and select events to register.</p>
+      <main className="flex-1 pt-28 pb-20">
+        <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
+          
+          <div className="mb-8">
+            <Link href="/" className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground hover:text-cyan-400 transition-colors mb-6">
+              <ArrowLeft size={14} /> BACK_TO_HOME
+            </Link>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs mb-3">
+              <Terminal size={12} />
+              <span>// REGISTRATION_PROTOCOL</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight uppercase mb-2">
+              Secure Your <span className="text-cyan-400">Slot</span>
+            </h1>
+            <p className="text-muted-foreground text-sm font-sans">
+              Enter your credentials and select your tracks to participate in Cybotixx 2026.
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8 bg-card/80 border border-border/80 rounded-2xl p-6 sm:p-8 backdrop-blur-md shadow-2xl">
+            
             {/* Personal Info */}
             <div className="space-y-4">
-              <h2 className="font-mono text-sm font-semibold uppercase tracking-wider border-b pb-2">Personal Info</h2>
+              <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-cyan-400 border-b border-border/60 pb-3 flex items-center gap-2">
+                <span>01.</span> OPERATOR_CREDENTIALS
+              </h2>
+              
               <div>
-                <Label htmlFor="fullName">Full Name *</Label>
-                <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="John Doe" className="mt-1" />
-                {errors.fullName && <p className="text-destructive text-xs mt-1">{errors.fullName}</p>}
+                <Label htmlFor="fullName" className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Full Name *</Label>
+                <Input 
+                  id="fullName" 
+                  value={fullName} 
+                  onChange={(e) => setFullName(e.target.value)} 
+                  placeholder="John Doe" 
+                  className="mt-1.5 bg-secondary/50 border-border/80 font-sans h-11" 
+                />
+                {errors.fullName && <p className="text-destructive font-mono text-xs mt-1.5">{errors.fullName}</p>}
               </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email">Email *</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" className="mt-1" />
-                  {errors.email && <p className="text-destructive text-xs mt-1">{errors.email}</p>}
+                  <Label htmlFor="email" className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Email Address *</Label>
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    placeholder="john@example.com" 
+                    className="mt-1.5 bg-secondary/50 border-border/80 font-sans h-11" 
+                  />
+                  {errors.email && <p className="text-destructive font-mono text-xs mt-1.5">{errors.email}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone *</Label>
-                  <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 9876543210" className="mt-1" />
-                  {errors.phone && <p className="text-destructive text-xs mt-1">{errors.phone}</p>}
+                  <Label htmlFor="phone" className="font-mono text-xs uppercase tracking-wider text-muted-foreground">Phone Number *</Label>
+                  <Input 
+                    id="phone" 
+                    value={phone} 
+                    onChange={(e) => setPhone(e.target.value)} 
+                    placeholder="+91 9876543210" 
+                    className="mt-1.5 bg-secondary/50 border-border/80 font-sans h-11" 
+                  />
+                  {errors.phone && <p className="text-destructive font-mono text-xs mt-1.5">{errors.phone}</p>}
                 </div>
               </div>
             </div>
 
             {/* Event Selection */}
-            <div className="space-y-4">
-              <h2 className="font-mono text-sm font-semibold uppercase tracking-wider border-b pb-2">Select Events</h2>
-              {errors.events && <p className="text-destructive text-xs">{errors.events}</p>}
+            <div className="space-y-4 pt-4">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-cyan-400 flex items-center gap-2">
+                  <span>02.</span> SELECT_EVENTS
+                </h2>
+                {errors.events && <p className="text-destructive font-mono text-xs">{errors.events}</p>}
+              </div>
 
               {isLoading ? (
                 <div className="space-y-3">
                   {[1, 2].map((i) => (
-                    <div key={i} className="border rounded-lg p-4 animate-pulse">
-                      <div className="h-4 bg-muted rounded w-1/3" />
+                    <div key={i} className="border border-border/60 rounded-xl p-4 animate-pulse bg-secondary/30">
+                      <div className="h-4 bg-muted rounded w-1/3 mb-2" />
+                      <div className="h-3 bg-muted rounded w-2/3" />
                     </div>
                   ))}
                 </div>
@@ -224,24 +260,29 @@ const Register = () => {
                     const full = isEventFull(event);
                     const disabled = full;
                     const spotsLeft = event.maxSlots ? event.maxSlots - (event._count?.registrations || 0) : null;
-                    const formattedDate = dayjs(event.eventDate).format("DD/MM/YY, hh:mm A");
+                    const formattedDate = dayjs(event.eventDate).format("DD MMM YY, hh:mm A");
 
                     return (
-                      <div key={event.id} className={`border rounded-lg p-4 transition-colors ${disabled ? "opacity-50" : ""} ${selected ? "bg-muted/50 border-foreground/20" : ""}`}>
-                        <div className="flex items-start gap-3">
+                      <div 
+                        key={event.id} 
+                        className={`border rounded-xl p-5 transition-all duration-200 ${
+                          disabled ? "opacity-50 bg-secondary/20" : ""
+                        } ${selected ? "bg-cyan-500/5 border-cyan-500/50 shadow-lg shadow-cyan-950/20" : "bg-secondary/30 border-border/80 hover:border-border"}`}
+                      >
+                        <div className="flex items-start gap-3.5">
                           <Checkbox
                             id={event.id}
                             checked={selected}
                             onCheckedChange={() => toggleEvent(event.id)}
-                            className="mt-0.5"
+                            className="mt-1"
                             disabled={disabled}
                           />
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <label htmlFor={event.id} className={`font-mono text-sm font-semibold ${disabled ? "" : "cursor-pointer"}`}>
+                            <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                              <label htmlFor={event.id} className={`font-mono text-sm font-bold text-foreground ${disabled ? "" : "cursor-pointer hover:text-cyan-400"}`}>
                                 {event.name}
                               </label>
-                              <Badge variant="outline" className="font-mono text-[10px] uppercase tracking-wider">
+                              <Badge variant="outline" className="font-mono text-[10px] uppercase tracking-wider bg-secondary">
                                 {event.eventType}
                               </Badge>
                               <Badge variant={getStatusVariant(status)} className="font-mono text-[10px] uppercase tracking-wider">
@@ -253,36 +294,40 @@ const Register = () => {
                                 </Badge>
                               )}
                             </div>
+
                             {event.description && (
-                              <p className="text-xs text-muted-foreground mt-1">{event.description}</p>
+                              <p className="text-xs text-muted-foreground font-sans leading-relaxed mb-3">{event.description}</p>
                             )}
-                            <div className="flex items-center gap-3 mt-2">
+
+                            <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
                               {event.eventDate && (
-                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                  <Calendar size={10} />
-                                  {formattedDate}
+                                <div className="flex items-center gap-1.5">
+                                  <Calendar size={12} className="text-cyan-400" />
+                                  <span>{formattedDate}</span>
                                 </div>
                               )}
                               {spotsLeft !== null && !full && (
-                                <span className="text-xs text-muted-foreground">{spotsLeft} spot{spotsLeft !== 1 ? "s" : ""} left</span>
+                                <span className="text-emerald-400">● {spotsLeft} slots remaining</span>
                               )}
                             </div>
 
-                            {/* Team fields */}
+                            {/* Team dynamic input fields */}
                             {selected && event.eventType === "TEAM" && teamData[event.id] && (
-                              <div className="mt-4 pl-0 space-y-3 border-t pt-4">
-                                <p className="text-xs text-muted-foreground">Member 1 (Leader): {fullName || "—"}</p>
+                              <div className="mt-4 pt-4 border-t border-border/60 space-y-3">
+                                <p className="font-mono text-xs text-cyan-400">
+                                  // TEAM_MEMBERS (Leader: {fullName || "You"})
+                                </p>
                                 {teamData[event.id].members.map((m, i) => (
                                   <div key={i}>
-                                    <Label className="text-xs">Member {i + 2} *</Label>
+                                    <Label className="font-mono text-[11px] text-muted-foreground">Member {i + 2} Name *</Label>
                                     <Input
                                       value={m}
                                       onChange={(e) => updateMember(event.id, i, e.target.value)}
-                                      placeholder={`Member ${i + 2} name`}
-                                      className="mt-1 h-8 text-sm"
+                                      placeholder={`Teammate ${i + 2} Full Name`}
+                                      className="mt-1 bg-background border-border/80 h-9 text-sm"
                                     />
                                     {errors[`member_${event.id}_${i}`] && (
-                                      <p className="text-destructive text-xs mt-1">{errors[`member_${event.id}_${i}`]}</p>
+                                      <p className="text-destructive font-mono text-xs mt-1">{errors[`member_${event.id}_${i}`]}</p>
                                     )}
                                   </div>
                                 ))}
@@ -295,21 +340,21 @@ const Register = () => {
                   })}
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">No events available for registration.</p>
+                <p className="text-muted-foreground font-mono text-xs">[ NO EVENTS AVAILABLE FOR REGISTRATION ]</p>
               )}
             </div>
 
             <Button
               type="submit"
-              className="w-full font-mono tracking-wider"
+              className="w-full font-mono uppercase tracking-wider h-12 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold glow-cyan transition-all"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 size={16} className="animate-spin mr-2" /> Submitting...
+                  <Loader2 size={16} className="animate-spin mr-2" /> PROCESSING_REGISTRATION...
                 </>
               ) : (
-                "Submit Registration"
+                "SUBMIT REGISTRATION"
               )}
             </Button>
           </form>
@@ -322,51 +367,51 @@ const Register = () => {
         open={feedbackDialog.open}
         onOpenChange={(open) => setFeedbackDialog(prev => ({ ...prev, open }))}
       >
-        <DialogContent className="sm:max-w-md border-2 border-foreground/10 p-0 overflow-hidden bg-background">
-          <div className={`h-2 w-full ${feedbackDialog.type === "success" ? "bg-foreground" : "bg-destructive"}`} />
+        <DialogContent className="sm:max-w-md border border-border/80 p-0 overflow-hidden bg-card">
+          <div className={`h-2 w-full ${feedbackDialog.type === "success" ? "bg-cyan-400" : "bg-destructive"}`} />
           <div className="p-8 pb-10">
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className={`p-3 rounded-full ${feedbackDialog.type === "success" ? "bg-foreground/5" : "bg-destructive/5"}`}>
+              <div className={`p-3 rounded-2xl ${feedbackDialog.type === "success" ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" : "bg-destructive/10 text-destructive border border-destructive/20"}`}>
                 {feedbackDialog.type === "success" ? (
-                  <CheckCircle2 className="w-10 h-10 text-foreground" strokeWidth={1.5} />
+                  <CheckCircle2 className="w-8 h-8" strokeWidth={1.5} />
                 ) : (
-                  <AlertCircle className="w-10 h-10 text-destructive" strokeWidth={1.5} />
+                  <AlertCircle className="w-8 h-8" strokeWidth={1.5} />
                 )}
               </div>
 
               <div className="space-y-2">
-                <DialogTitle className="font-mono text-xl font-bold tracking-tighter uppercase">
-                  {feedbackDialog.type === "success" ? "Registration Success" : "Registration Failed"}
+                <DialogTitle className="font-mono text-xl font-bold tracking-tight uppercase">
+                  {feedbackDialog.type === "success" ? "Registration Confirmed" : "Registration Failed"}
                 </DialogTitle>
-                <DialogDescription className="text-muted-foreground text-sm max-w-70">
+                <DialogDescription className="text-muted-foreground text-sm font-sans max-w-xs">
                   {feedbackDialog.message}
                 </DialogDescription>
               </div>
             </div>
 
-            <div className="mt-10 flex flex-col gap-3">
+            <div className="mt-8 flex flex-col gap-3">
               {feedbackDialog.type === "success" ? (
                 <>
                   <Button
-                    className="w-full font-mono uppercase tracking-widest text-xs h-12"
+                    className="w-full font-mono uppercase tracking-widest text-xs h-11 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold"
                     onClick={() => router.push("/")}
                   >
-                    Back to Home
+                    Return to Home
                   </Button>
                   <Button
                     variant="outline"
-                    className="w-full font-mono uppercase tracking-widest text-xs h-12 border-foreground/10"
+                    className="w-full font-mono uppercase tracking-widest text-xs h-11 border-border"
                     onClick={() => {
                       const filterEvent = selectedEvents.length === 1 ? selectedEvents[0] : "all";
                       router.push(`/registrations?eventId=${filterEvent}`);
                     }}
                   >
-                    Review Details
+                    View Directory
                   </Button>
                 </>
               ) : (
                 <Button
-                  className="w-full font-mono uppercase tracking-widest text-xs h-12 bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  className="w-full font-mono uppercase tracking-widest text-xs h-11 bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                   onClick={() => setFeedbackDialog({ ...feedbackDialog, open: false })}
                 >
                   <X className="w-3 h-3 mr-2" /> Try Again
